@@ -37,7 +37,7 @@ def SW_distance(seq1, seq2,gap_open=10,gap_extend=0.5):
     for j in range(2,rows):
         score_matrix[j][0]=score_matrix[j-1][0]+gap_extend
 
-    #keep track of maximum score, this is the metric to be returned
+    #keep track of maximum score, this is NOT the metric to be returned
     max_score=0
     max_pos=(0,0)
 
@@ -50,7 +50,8 @@ def SW_distance(seq1, seq2,gap_open=10,gap_extend=0.5):
             if current_score>max_score:
                 max_score=current_score
                 max_pos=(i,j)
-    return max_score
+    #return the score at the end (bottom right corner) of the alignment matrix
+    return score_matrix[-1][-1]
 
 #calculate the score of the current position in the matrix
 def calculate_score(mymatrix,mypath,row,col,seq1,seq2,gap_open,gap_extend):
@@ -76,7 +77,7 @@ def calculate_score(mymatrix,mypath,row,col,seq1,seq2,gap_open,gap_extend):
     score_from_left=mymatrix[row][col-1]+gap_penalty_left
     score_from_diag=mymatrix[row-1][col-1]-match_score(char1,char2)
     
-    thisscore= max(score_from_up,score_from_left,score_from_diag)
+    thisscore= min(score_from_up,score_from_left,score_from_diag)
     thisdir=""
     
     #keep track of the direction of movement so we know whether

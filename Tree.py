@@ -15,12 +15,12 @@ class Node(object):
         node.level=self.level+1
     def is_leaf(self):
         return self.children==[]
-    def print_node(self):
+    def print_node(self,data=False):
         indent=self.level*" "
-        #if data==False:
-        #    nodestr=str(self.index)
-        #else:
-        nodestr=str(self.data)
+        if data==False:
+            nodestr=str(self.index)+"\n"
+        else:
+            nodestr=str(self.data)+"\n"
         print(indent+nodestr)
     def print_tree(self):
         current_level=self.level
@@ -33,3 +33,7 @@ class Node(object):
             current_node.print_node()
 
 
+x=Node(12,1)
+y=Node(30,2,x)
+x.add_child(y)
+x.print_tree()
