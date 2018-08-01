@@ -1,4 +1,4 @@
-function [L, U] = Spectralpt1(W, Type)
+function [L, U, V] = Spectralpt1(W, Type)
 %SPECTRALCLUSTERING Executes spectral clustering algorithm
 %   Executes the spectral clustering algorithm defined by
 %   Type on the adjacency matrix W and returns the k cluster
@@ -53,7 +53,7 @@ end
 % eigenvalues
 diff   = eps;
 %[U, ~] = eigs(L, k, diff);
-
+%[U, V] = eigs(L, k, diff);
 %%CHECK IF SORTED ETC
 [U,V]=eigs(L,size(W,1));
 end

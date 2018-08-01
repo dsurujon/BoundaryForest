@@ -1,5 +1,9 @@
-function [C] = Spectralpt2(U, k, Type)
-U=U(:,1:k);
+function [C] = Spectralpt2(U,V, k, Type)
+% get eigenvectors associated with the k smallest eigenvalues
+Vvec = V*ones(length(V),1);
+[vsort, vorder] = sort(Vvec);
+
+U=U(:,vorder(1:k));
 U=abs(U);
 % in case of the Jordan-Weiss algorithm, we need to normalize
 % the eigenvectors row-wise
