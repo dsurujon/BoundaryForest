@@ -11,6 +11,12 @@ max_deg = 10;
 %replicates = 10;
 %krange = 3:15;
 
+[filepath,name,ext] = fileparts(fastafile);
+outfilename = strcat(name,'.mat');
+outfilename = fullfile(outdir, outfilename);
+
+parobj = parpool(replicates);
+
 %make trees (n replicates)
 seqs = fastaread(fastafile);
 trees = cell(1,replicates);
@@ -18,7 +24,7 @@ tree_node_refs = cell(1,replicates);
 data_order_ixs = cell(1,replicates);
 
 disp('Making Boundary Forest');
-for i=1:replicates
+parfor i=1:replicates
     disp(i);
     [tree,tree_node_ref,data_order_ix] = boundary_tree(seqs, eps, max_deg);
     trees{i} = tree;
@@ -26,14 +32,16 @@ for i=1:replicates
     data_order_ixs{i} = data_order_ix;
 end
 
+save(outfilename, 'trees','tree_node_refs','data_order_ixs','-v7.3');
 
 %make dms (n replicates)
 disp('Calculating distance matrices');
 dms = cell(1,replicates);
-for i=1:replicates
+parfor i=1:replicates
     disp(i);
     dms{i} = pairwise_distances(trees{i}, seqs);
 end
+save(outfilename, 'dms','-append');
 
 
 % cluster
@@ -66,7 +74,7 @@ for i=1:replicates
        ALL_clusters{6,j,i} = clusters_tree_SP3{j}; 
     end
 end
-
+save(outfilename, 'ALL_clusters','-append');
 
 
 % pick best cluster - finding elbow
@@ -88,12 +96,12 @@ for method = 1:6
        bestSSE(method,i) = SSE(method,bestk_ix,i);
     end
 end
+save(outfilename, 'SSE','bestcluster_ix','bestcluster','bestSSE','-append');
 
 %fprintf('Tree\tK\tSSE\n')
 %disp([[1:replicates]' bestcluster' bestSSE']);
 
 % plot SSE and best clusters determined
-[filepath,name,ext] = fileparts(fastafile);
 figfilename = strcat(name,'.png');
 figfilename = fullfile(outdir,figfilename);
 figure('visible','off');
@@ -117,6 +125,8 @@ for method = 1:6
     clusterres_ext{method} = clusres_thismethod;
 end
 
+save(outfilename, 'clusterres_ext','-append');
+
 %consensus clustering
 disp('Consensus clustering using hierarchical-ward');
 consclust = cell(1,6);
@@ -130,11 +140,10 @@ end
 
 disp('Saving all data');
 % save all data into a file
-outfilename = strcat(name,'.mat');
-outfilename = fullfile(outdir, outfilename);
-save(outfilename,'trees','tree_node_refs','dms','fastafile',...
-    'ALL_clusters','krange','SSE','bestcluster_ix',...
-    'bestcluster','bestSSE','clusterres_ext','consclust',...
-    'kcons','-v7.3')
+
+save(outfilename,'fastafile',...
+    'krange',...
+    'consclust',...
+    'kcons','-append')
 
 end

@@ -11,7 +11,7 @@ function X = vectorize_dm_fn(distances)
 
     n=length(distances);
     %retain eigenvalues that will capture 99% of variabilty
-    evalthreshold=0.30;
+    evalthreshold=0.01;
     M=zeros(n);
     for i=1:n
         for j=1:n
