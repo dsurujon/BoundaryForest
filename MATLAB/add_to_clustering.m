@@ -1,4 +1,4 @@
-function [new_consclust, new_clusterres_ext] = add_to_clustering(newseqsfile, treeseqsfile, clusterdatafile)
+function [new_consclust, new_clusterres_ext] = add_to_clustering(newseqsfile, treeseqsfile, clusterdatafile,ntree)
 
 newseqs = fastaread(newseqsfile);
 treeseqs = fastaread(treeseqsfile);
